@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#090d18" />
+    <meta name="description" content="Skyline Sling — a fast original 3D energy-cable swinging challenge." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Skyline Sling</title>
+  </head>
+  <body>
+    <div id="game-shell">
+      <div id="webgl-fallback" class="screen hidden" role="alert">
+        <div class="panel compact-panel">
+          <p class="eyebrow">GRAPHICS CHECK</p>
+          <h1>WebGL isn’t available</h1>
+          <p>Skyline Sling needs WebGL. Try an up-to-date browser with hardware acceleration enabled.</p>
+        </div>
+      </div>
+
+      <div id="loading-screen" class="screen">
+        <div class="loading-mark" aria-hidden="true"><span></span></div>
+        <p class="eyebrow">AERO SYSTEMS</p>
+        <h1>SKYLINE <em>SLING</em></h1>
+        <div class="loading-track" role="progressbar" aria-label="Loading game" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <span id="loading-fill"></span>
+        </div>
+        <p id="loading-label" class="small-copy">Building Meridian City…</p>
+      </div>
+
+      <div id="start-screen" class="screen hidden">
+        <div class="hero-copy">
+          <p class="eyebrow">MERIDIAN CITY // NIGHT RUN 01</p>
+          <h1>SKYLINE<br /><em>SLING</em></h1>
+          <p class="tagline">Ride the momentum. Thread the skyline. Light up the city.</p>
+          <button id="play-button" class="primary-button"><span>START 90s RUN</span><kbd>ENTER</kbd></button>
+          <p class="best-line">PERSONAL BEST <strong id="menu-best">0</strong></p>
+        </div>
+
+        <div class="briefing panel">
+          <div class="briefing-head">
+            <span>FIELD BRIEFING</span>
+            <span class="status-dot">SYSTEM READY</span>
+          </div>
+          <div class="control-grid">
+            <div><kbd>WASD</kbd><span>Move</span></div>
+            <div><kbd>MOUSE</kbd><span>Look</span></div>
+            <div><kbd>SPACE</kbd><span>Jump</span></div>
+            <div><kbd>SHIFT</kbd><span>Sprint</span></div>
+            <div class="wide"><kbd>HOLD LMB / E</kbd><span>Fire energy cable</span></div>
+            <div class="wide"><kbd>ESC</kbd><span>Pause</span></div>
+          </div>
+          <p class="desktop-note">Desktop keyboard + mouse gives the best experience. Touch controls are available on phones.</p>
+        </div>
+
+        <button id="menu-settings-button" class="icon-button corner-button" aria-label="Open settings">⚙</button>
+      </div>
+
+      <div id="hud" class="hidden" aria-live="polite">
+        <div class="hud-top">
+          <div class="hud-cluster score-cluster">
+            <span class="hud-label">SCORE</span>
+            <strong id="score-value">00000</strong>
+            <span id="score-pop" class="score-pop"></span>
+          </div>
+          <div class="timer-shell">
+            <span class="hud-label">RUN TIME</span>
+            <strong id="timer-value">01:30</strong>
+            <div class="timer-track"><span id="timer-fill"></span></div>
+          </div>
+          <div class="hud-cluster right-cluster">
+            <span class="hud-label">VELOCITY</span>
+            <strong><span id="speed-value">000</span><small> KM/H</small></strong>
+          </div>
+        </div>
+
+        <div id="combo-display" class="combo-display">
+          <span>FLOW</span><strong id="combo-value">×1</strong>
+          <div class="combo-track"><span id="combo-fill"></span></div>
+        </div>
+
+        <div id="crosshair" class="crosshair" aria-hidden="true">
+          <i></i><span></span>
+          <b id="target-distance"></b>
+        </div>
+
+        <div id="swing-status" class="swing-status">
+          <span class="swing-dot"></span>
+          <span id="swing-label">SEARCHING FOR ANCHOR</span>
+        </div>
+
+        <div id="objective-toast" class="objective-toast">COLLECT ORBS + FLY THROUGH GATES</div>
+        <button id="hud-pause-button" class="icon-button hud-pause" aria-label="Pause game">Ⅱ</button>
+
+        <div id="speed-lines" aria-hidden="true"></div>
+        <div id="vignette" aria-hidden="true"></div>
+      </div>
+
+      <div id="pause-screen" class="screen overlay-screen hidden">
+        <div class="panel menu-panel">
+          <p class="eyebrow">RUN SUSPENDED</p>
+          <h2>PAUSED</h2>
+          <button id="resume-button" class="primary-button"><span>RESUME</span><kbd>ESC</kbd></button>
+          <button id="pause-restart-button" class="secondary-button">RESTART RUN</button>
+          <button id="pause-settings-button" class="secondary-button">SETTINGS</button>
+          <button id="quit-button" class="text-button">QUIT TO TITLE</button>
+        </div>
+      </div>
+
+      <div id="results-screen" class="screen overlay-screen hidden">
+        <div class="panel results-panel">
+          <p class="eyebrow">RUN COMPLETE</p>
+          <h2 id="result-title">CITY LIT</h2>
+          <div class="result-score">
+            <span>FINAL SCORE</span>
+            <strong id="final-score">0</strong>
+            <em id="new-best" class="hidden">NEW PERSONAL BEST</em>
+          </div>
+          <div class="result-stats">
+            <div><strong id="orbs-collected">0</strong><span>ORBS</span></div>
+            <div><strong id="gates-cleared">0</strong><span>GATES</span></div>
+            <div><strong id="top-speed">0</strong><span>TOP KM/H</span></div>
+          </div>
+          <button id="results-restart-button" class="primary-button"><span>RUN IT AGAIN</span><kbd>R</kbd></button>
+          <button id="results-menu-button" class="text-button">BACK TO TITLE</button>
+        </div>
+      </div>
+
+      <div id="settings-screen" class="screen overlay-screen hidden">
+        <div class="panel settings-panel">
+          <div class="panel-title-row">
+            <div><p class="eyebrow">AERO SYSTEMS</p><h2>SETTINGS</h2></div>
+            <button id="close-settings-button" class="icon-button" aria-label="Close settings">×</button>
+          </div>
+          <label class="setting-row">
+            <span><strong>Graphics quality</strong><small>Changes detail and pixel density</small></span>
+            <select id="quality-select">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </label>
+          <label class="setting-row">
+            <span><strong>Mouse sensitivity</strong><small>Camera look speed</small></span>
+            <span class="range-wrap"><input id="sensitivity-slider" type="range" min="0.25" max="1.5" value="0.75" step="0.05" /><output id="sensitivity-output">0.75</output></span>
+          </label>
+          <label class="setting-row switch-row">
+            <span><strong>Sound effects</strong><small>Generated with Web Audio</small></span>
+            <input id="sound-toggle" type="checkbox" checked />
+          </label>
+          <label class="setting-row switch-row">
+            <span><strong>Reduced motion</strong><small>Disables speed lines and strong FOV shifts</small></span>
+            <input id="motion-toggle" type="checkbox" />
+          </label>
+          <button id="fullscreen-button" class="secondary-button">ENTER FULLSCREEN</button>
+        </div>
+      </div>
+
+      <div id="mobile-controls" class="hidden" aria-label="Touch game controls">
+        <div id="joystick-zone" class="joystick-zone"><div id="joystick-knob"></div></div>
+        <div id="camera-zone" class="camera-zone"></div>
+        <button id="touch-jump" class="touch-button jump-button">JUMP</button>
+        <button id="touch-swing" class="touch-button swing-button">SLING</button>
+        <button id="touch-boost" class="touch-button boost-button">BOOST</button>
+        <button id="touch-pause" class="touch-pause" aria-label="Pause">Ⅱ</button>
+      </div>
+
+      <div id="announcement" class="announcement" role="status" aria-live="assertive"></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
